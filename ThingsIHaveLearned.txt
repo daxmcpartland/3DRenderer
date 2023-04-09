@@ -1,0 +1,171 @@
+Windows Application:
+
+- In a standard windows 32 application instead of 'main' being the function that starts everything (entry point) it is 'WinMain'
+- Entry point just means where the application or program starts running from.
+- Windows takes two things to create an application, it needs windows and messages. Windows needs a class and an instance. A class is basically just a window, while the instance is just something that will show the window. The reason these are separate from each other is so you can have multiple classes in one instance. Windows can have multiple windows inside of it.
+
+This is what the entry point looks like for WinMain:
+
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	while (true);
+	return 0;
+}
+
+Defintions:
+
+-HINSTANCE hInstance -> is simply a pointer to the instance in memory
+-HINSTANCE hPrevInstance -> was a pointer back in the day for old windows machines, however it is not used anymore so it will always be NULL
+-LPSTR lpCmdLine -> a string of the entire command line. This is useful if the user needs to input stuff into cmd.
+-int nCmdShow -> this is a int code that creates the window in a certian way. For example, I want the screen to be minimized when run, or something like that.
+-CALLBACK -> this is a keyword that tells c++ to handle this method different and put it on the stack differently than how it would in standard C. This is needed for the Windows API
+
+
+For the following EX -> just means extra features 
+
+Register Window Class:
+
+-To register a window class we need to create a pointer to a WNDCLASSEX which will basically create the basic setup for 
+
+The WNDCLASSEX looks like this:
+
+typedef struct tagWNDCLASSEXA {
+  UINT      cbSize; // the size of this structure
+  UINT      style; // the style of the windows class, the one for the 3DRender will be CS_OWNDC 
+  WNDPROC   lpfnWndProc; // most important, a pointer to the a function that handles all the messages for the window
+  int       cbClsExtra; // allows to alocate extra bytes of data
+  int       cbWndExtra; // allows to aocate extra bytes of data for instances of this class
+  HINSTANCE hInstance; // the instance that is from the WinMain
+  HICON     hIcon; // handles class icon
+  HCURSOR   hCursor; // handles how the cursor looks
+  HBRUSH    hbrBackground; // used to draw the backgound of the window if needed
+  LPCSTR    lpszMenuName; // menu's name
+  LPCSTR    lpszClassName; // this class name
+  HICON     hIconSm; // used to set custom icons 
+}
+
+  
+Creating a Window Instance:
+
+-To create a window instance need to use CreateWindowEXA
+
+The CreateWindowEXA looks like this: 
+
+HWND CreateWindowExA(
+  [in]           DWORD     dwExStyle, // more styles
+  [in, optional] LPCSTR    lpClassName, // the class name this instance is for
+  [in, optional] LPCSTR    lpWindowName, // the name you want for this window
+  [in]           DWORD     dwStyle, // more styles
+  [in]           int       X, // positions of window
+  [in]           int       Y, // positions of window
+  [in]           int       nWidth, // demensions of window
+  [in]           int       nHeight, // demensions of window
+  [in, optional] HWND      hWndParent, // a handle to the parent of the window has another parent window, null if it has no parent
+  [in, optional] HMENU     hMenu, // menu handle
+  [in, optional] HINSTANCE hInstance, // hInstance needed
+  [in, optional] LPVOID    lpParam // used to configure custom data to pass to window
+);
+
+
+Remember how Windows needs two things: Windows and Messages. Well in order to get responses from the windows application we need to set up messages.
+
+Messgaes:
+
+- The Message part of WinAPI is event driven programming, first thing needed is the getMessage function.
+
+BOOL GetMessage(
+  [out]          LPMSG lpMsg, // A pointer to the message
+  [in, optional] HWND  hWnd, // Handeler for the window
+  [in]           UINT  wMsgFilterMin, // Used to filter what messages you want
+  [in]           UINT  wMsgFilterMax // Used to filter what messages you want
+);
+
+LPMSG lpMsg follows it's own format below:
+
+typedef struct tagMSG {
+  HWND   hwnd; // handler for the window
+  UINT   message; // gives the message number (used for what type of message)
+  WPARAM wParam; // means different things depending on message
+  LPARAM lParam; // means different things depending on message
+  DWORD  time; // timestamp for message
+  POINT  pt; // get the position of cursor
+  DWORD  lPrivate; // don't touch lol
+}
+
+
+NoExpect:
+
+-noexpect in c++ is added at the end of an expression. It is basically saying expect to not throw any errors. So if << "Is no_throw() noexcept? " << noexcept(no_throw()) it would return true because we have declared beforehand that no_throw() will not throw any errors.
+
+Delete keyword:
+
+-In c++ after a method you can add Keyboard& operator=(const Keyboard&) = delete; to tell the compiler that you don't want that method. It will just delete that method when setting up the class.
+
+
+Friend declaration:
+
+-In C++ the friend declaration makes a class that can see all of the private stuff in the class it is in. And also the other way around. 
+
+Optional<type>:
+
+-In C++ 17 a type can be set to optional like std::optional<int> this means that it has the option to return an int or an option to return an empty optional type.
+
+Component Object Model (Or COM for short):
+
+COM 
+
+COM uses interfaces to interact with code that was compiled differently. A COM object has a reference counter to count the amount of classes and other things that are referencing it. To add a reference to a COM object use AddRef() to get rid of one use Release(), if the COM object has a reference counter of 0 it will automatically delete. It is a similar idea to shared pointer.
+
+UUID -> Univerally Unique ID Because each Interface must have unquie id
+
+Basically COM uses Vtables. Where it is a pointer to a class which has function pointers to each function.
+
+Graphics:
+
+In graphics there are two buffers that read the screen, the front buffer which will just basically take a screenshot of the screen and send it to display, and the back buffer which will do all the work of calculating and drawing. Once the back one is done drawing either copy all of the pixels to the front and start over or flip the buffers and start over. This is called presenting or swaping I think
+
+
+C++ Rules Of Three:
+
+-Remeber If we ever have to use one of the rule of three methods then you should implement all of them. If you don't need them you can just delete them. Like so, Graphics( const Graphics& ) = delete;
+
+
+C++:
+ 
+in C++ L"string" means it is a long string or in other words a wide string
+
+
+All render pipelines need a vertex shader in order to run 
+
+Shaders:
+
+- Shader's have there own prgramming language
+- The file for shader's are .hlsl
+
+
+
+
+DirectX 3D pipeline:
+
+-The 3D pipeline for drawing stuff on the screen requires boths a vertex sharder and a pixel shader in order to run.
+
+
+Com Pointers:
+
+-Com pointers are smart pointers that now when to release themselves. It does this by overloading the & opeartor so when you call &comPtr it will free and return a pointer to that pointer. One bad thing about this is that it frees the data. So if you want the data after it you have to use the comPtr.GetAddressOf() method.
+
+Drawing more than one triangle:
+
+-I was unable to draw more than one triangle but that was because I had the winding off. DirectX draws triangles in only one direction so if it doesn't pop up then you want to draw it the other direction. 
+
+-By changing the topology, you can get different shapes other than triangle. For example you can draw lines between the vertices.
+
+
+Index Drawing:
+
+-How it is currently drawing, you need 3 vertices for one face of a shape. This is very ineffiecent. The solution is to index draw. Basically give each vertex you already draw an index, so you can use that vertex again to draw another face.
+
+
+Constant Buffer:
+
+-The constant buffer is basically a buffer that contains the transformation matrix. We bind it to the vertex shader that way it is computed on the GPU side and not cpu side. 
+
